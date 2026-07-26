@@ -6,7 +6,6 @@ def CalculateChecksum(FileName):
     fobj = open(FileName , "rb")
     
     hobj = hashlib.md5()
-    
     Buffer = fobj.read(1024)
     
     while(len(Buffer)>0):
@@ -14,7 +13,6 @@ def CalculateChecksum(FileName):
         Buffer = fobj.read(1024)
     
     fobj.close()
-    
     return hobj.hexdigest()
 
 def FindDuplicate(DirectoryName):
@@ -42,20 +40,34 @@ def FindDuplicate(DirectoryName):
             
             Checksum = CalculateChecksum(fname)
             
-            print(f"{fname}: {Checksum}")
-            
             if Checksum in Duplicate:
-                Same = Same+1
+               
                 Duplicate[Checksum].append(fname)
             else:
-                Unique = Unique + 1
+               
                 Duplicate[Checksum] = [fname]
                 
-    print("Unique files found :" , Unique)
-    print("Duplicate Files Found :" , Same)
+    return Duplicate
+          
+def DeleteDuplicate(DirectoryName):
+    MyDict = FindDuplicate(DirectoryName)
+  
+    Result = list(filter(lambda X : len(X)>1, MyDict.values()))
+    count =0
+    TotalDeleted =0
+    
+    for value in Result:
+        for Subvalue in value:
+            count = count +1
+            if(count >1):
+                print("Duplicate found :", Subvalue)
+                TotalDeleted = TotalDeleted +1
+        count = 0
+        
+    print("Total Deleted Files :", TotalDeleted)
             
 def main():
-   FindDuplicate("Test")
-    
+   DeleteDuplicate("Test")
+   
 if __name__=="__main__":
     main()
